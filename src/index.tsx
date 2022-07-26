@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { store } from './app/store';
 import App from './App';
 import './index.css';
-import "mdb-react-ui-kit/dist/css/mdb.min.css"
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
