@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAppDispatch } from "../app/hooks";
+import { setUser } from "../features/authSlice";
 import { useLoginUserMutation } from "../services/authApi";
 
 const initialState = {
@@ -17,6 +19,7 @@ const Auth = () => {
   const [formValue, setFormValue] = useState(initialState);
   const [showRegister, setShowRegister] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [
     loginUser,
     {
@@ -36,17 +39,30 @@ const Auth = () => {
   const handleLogin = async () => {
     if (email && password) {
       await loginUser({ email, password });
-    }else {
-      toast.error("Please fill in your email and password")
+    } else {
+      toast.success("Please fill the all Inputs", {
+        position: "top-right",
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
     }
   };
 
   useEffect(() => {
-    if(isLoginSuccess) {
-      toast.success("User Login Successfully");
-      navigate("/dashboard")
+    if (isLoginSuccess) {
+      toast.success("User Login Successfully", {
+        position: "top-right",
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+      dispatch(
+        setUser({ name: loginData.result.name, token: loginData.token })
+      );
+      navigate("/dashboard");
     }
-  }, [isLoginSuccess])
+  }, [isLoginSuccess]);
 
   return (
     <section className="flex h-screen gradient">
