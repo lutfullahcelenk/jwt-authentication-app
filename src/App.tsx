@@ -8,17 +8,17 @@ import Dashboard from "./pages/Dashboard";
 
 function App() {
   const dispatch = useAppDispatch();
-  const user = JSON.parse(localStorage.getItem("user")||  "{}");
-  console.log('user', user)
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  console.log("user", user);
 
-  useEffect(()=> {
+  useEffect(() => {
     dispatch(setUser(user));
-  },[])
+  }, []);
 
   return (
     <div className="App">
       <BrowserRouter>
-        <ToastContainer position="bottom-right" />
+        {/* <ToastContainer position="bottom-right" /> */}
         <Routes>
           <Route path="/" element={<Navigate to="auth" replace />} />
           <Route path="/auth" element={<Auth />} />
