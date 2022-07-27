@@ -5,7 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAppDispatch } from "../app/hooks";
 import { setUser } from "../features/authSlice";
-import { useLoginUserMutation } from "../services/authApi";
+import {
+  useLoginUserMutation,
+  useRegisterUserMutation,
+} from "../services/authApi";
 
 const initialState = {
   firstName: "",
@@ -30,39 +33,72 @@ const Auth = () => {
     },
   ] = useLoginUserMutation();
 
+  const [
+    registerUser,
+    {
+      data: registerData,
+      isSuccess: isRegisterSuccess,
+      isError: isRegisterError,
+      error: registerError,
+    },
+  ] = useRegisterUserMutation();
+
   const { firstName, lastName, email, password, confirmPassword } = formValue;
 
+  //onchange function for form inputs
   const handleChange = (e: any) => {
     setFormValue({ ...formValue, [e.target.name]: e.target.value });
   };
 
+  //register function
+  const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      return toast.error("Password dont match with each other...");
+    }
+
+    if (firstName && lastName && password && email) {
+      await registerUser({ firstName, lastName, email, password });
+    }
+  };
+
+  //login function
   const handleLogin = async () => {
     if (email && password) {
       await loginUser({ email, password });
     } else {
-      toast.success("Please fill the all Inputs", {
-        position: "top-right",
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-      });
+      toast.success("Please fill the all Inputs");
     }
   };
 
+  //success scenerio
   useEffect(() => {
     if (isLoginSuccess) {
-      toast.success("User Login Successfully", {
-        position: "top-right",
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-      });
+      toast.success("User Login Successfully");
       dispatch(
         setUser({ name: loginData.result.name, token: loginData.token })
       );
       navigate("/dashboard");
     }
-  }, [isLoginSuccess]);
+    
+    if (isRegisterSuccess) {
+      toast.success("User Register Successfully");
+      dispatch(
+        setUser({ name: registerData.result.name, token: registerData.token })
+      );
+      navigate("/dashboard");
+    }
+  }, [isLoginSuccess, isRegisterSuccess]);
+
+  //error scenerio
+  useEffect(() => {
+    if (isLoginError) {
+      toast.error((loginError as any).data.message);
+    }
+    
+    if (isRegisterSuccess) {
+      toast.error((registerError as any).data.message);
+    }
+  }, [isLoginError, isRegisterError]);
 
   return (
     <section className="flex h-screen gradient">
@@ -152,6 +188,7 @@ const Auth = () => {
           <button
             type="button"
             className="px-10 py-2 my-6 uppercase border rounded-lg"
+            onClick={() => handleRegister()}
           >
             Register
           </button>

@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useAppDispatch } from "./app/hooks";
 import { setUser } from "./features/authSlice";
 import Auth from "./pages/Auth";
@@ -17,8 +19,8 @@ function App() {
 
   return (
     <div className="App">
+      <ToastContainer />
       <BrowserRouter>
-        {/* <ToastContainer position="bottom-right" /> */}
         <Routes>
           <Route path="/" element={<Navigate to="auth" replace />} />
           <Route path="/auth" element={<Auth />} />
