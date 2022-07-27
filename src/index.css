@@ -4,6 +4,6 @@
 
 @layer base {
   .gradient {
-    @apply bg-gradient-to-r from-cyan-500 to-blue-500;
+    @apply bg-gradient-to-r from-purple-800 to-blue-700;
   }
 }
