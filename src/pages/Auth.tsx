@@ -1,5 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useLoginUserMutation } from "../services/authApi";
 
 const initialState = {
   firstName: "",
@@ -12,12 +16,37 @@ const initialState = {
 const Auth = () => {
   const [formValue, setFormValue] = useState(initialState);
   const [showRegister, setShowRegister] = useState(false);
+  const navigate = useNavigate();
+  const [
+    loginUser,
+    {
+      data: loginData,
+      isSuccess: isLoginSuccess,
+      isError: isLoginError,
+      error: loginError,
+    },
+  ] = useLoginUserMutation();
 
   const { firstName, lastName, email, password, confirmPassword } = formValue;
 
-  const handleChange = (e:any) => {
-    setFormValue({...formValue, [e.target.name]: e.target.value});
+  const handleChange = (e: any) => {
+    setFormValue({ ...formValue, [e.target.name]: e.target.value });
   };
+
+  const handleLogin = async () => {
+    if (email && password) {
+      await loginUser({ email, password });
+    }else {
+      toast.error("Please fill in your email and password")
+    }
+  };
+
+  useEffect(() => {
+    if(isLoginSuccess) {
+      toast.success("User Login Successfully");
+      navigate("/dashboard")
+    }
+  }, [isLoginSuccess])
 
   return (
     <section className="flex h-screen gradient">
@@ -99,6 +128,7 @@ const Auth = () => {
           <button
             type="button"
             className="px-10 py-2 my-6 uppercase border rounded-lg"
+            onClick={() => handleLogin()}
           >
             Login
           </button>
